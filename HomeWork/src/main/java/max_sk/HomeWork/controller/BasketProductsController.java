@@ -1,8 +1,10 @@
 package max_sk.HomeWork.controller;
 
 import lombok.RequiredArgsConstructor;
+import max_sk.HomeWork.dto.OrderDTO;
 import max_sk.HomeWork.dto.ProductDTO;
 import max_sk.HomeWork.services.BasketProductsService;
+import max_sk.HomeWork.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +15,8 @@ import java.util.List;
 @RequestMapping("/api/v1/basket")
 @RequiredArgsConstructor
 public class BasketProductsController {
-    private BasketProductsService basketProductsService;
-
-    @Autowired
-    public BasketProductsController(BasketProductsService basketProductsService){
-        this.basketProductsService = basketProductsService;
-    }
+    private final BasketProductsService basketProductsService;
+    private final OrderService orderService;
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,9 +39,10 @@ public class BasketProductsController {
         return basketProductsService.deleteProductFromBasket(id);
     }
 
-    @GetMapping("/order/{userName}")
-    public void createOrder(@PathVariable String userName){
-
-        basketProductsService.createOrder(userName);
+    @PostMapping("/order{order}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO){
+        basketProductsService.createOrder(orderDTO);
+        return orderService.orderDTOList(orderDTO);
     }
 }

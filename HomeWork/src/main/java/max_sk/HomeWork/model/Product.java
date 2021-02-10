@@ -38,7 +38,7 @@ public class Product {
     @OneToMany
     @JoinTable(name = "orders",
             joinColumns = @JoinColumn(name = "id_product"))
-    private Collection<Order> orderCollection;
+    private Collection<Product> orderCollection;
 
 
     public Product(ProductDTO productDTO) {

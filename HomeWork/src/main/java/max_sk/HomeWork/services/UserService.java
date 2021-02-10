@@ -2,6 +2,7 @@ package max_sk.HomeWork.services;
 
 
 import lombok.RequiredArgsConstructor;
+import max_sk.HomeWork.dto.UserDTO;
 import max_sk.HomeWork.model.Role;
 import max_sk.HomeWork.model.User;
 import max_sk.HomeWork.repository.UserRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.EntityManager;
+import javax.swing.text.html.parser.Entity;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -36,5 +40,15 @@ public class UserService implements UserDetailsService {
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void registrationUser(UserDTO userDTO){
+        entityManager.createNativeQuery("insert into users(USERNAME, PASSWORD, EMAIL) values(:a,:b,:c)")
+                .setParameter("a", userDTO.getUserName() )
+                .setParameter("b", userDTO.getRegPassword())
+                .setParameter("c", userDTO.getMail())
+                .executeUpdate();
+
     }
 }

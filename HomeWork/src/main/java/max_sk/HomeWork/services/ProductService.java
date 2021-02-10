@@ -1,11 +1,10 @@
 package max_sk.HomeWork.services;
 
+import lombok.RequiredArgsConstructor;
 import max_sk.HomeWork.dto.ProductDTO;
 import max_sk.HomeWork.model.Product;
 import max_sk.HomeWork.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -15,13 +14,9 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
-    private ProductRepository productRepository;
-
-    @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductRepository productRepository;
 
     public Page<ProductDTO> findAll(Specification<Product> spec, int page, int pageSize) {
         return productRepository.findAll(spec, PageRequest.of(page - 1, pageSize)).map(ProductDTO::new);

@@ -34,17 +34,21 @@ public class Order {
     @Column(name = "sum_cost")
     private int sumCost;
 
+    @Column(name = "adres")
+    private String adres;
+
     @Column(name = "create_at")
     @CreationTimestamp
     private Date updateAt;
 
-    public Order(Long id, Long idUser, Long idProduct, Long orderNumber,  int count,  int sumCost, Date date) {
+    public Order(Long id, Long idUser, Long idProduct, Long orderNumber,  int count,  int sumCost, String adres, Date date) {
         this.id = id;
         this.idUser = idUser;
         this.idProduct = idProduct;
         this.orderNumber = orderNumber;
         this.count = count;
         this.sumCost = sumCost;
+        this.adres = adres;
         this.updateAt = date;
     }
 }

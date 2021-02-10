@@ -23,6 +23,7 @@ create table orders(
                        order_number    bigint,
                        count           int,
                        sum_cost        int,
+                       adres           varchar(30),
                        create_at timestamp default current_timestamp
 );
 

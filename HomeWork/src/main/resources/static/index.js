@@ -18,7 +18,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             if (minPageIndex < 1) {
                 minPageIndex = 1;
             }
-
+            basketProduct
             let maxPageIndex = pageIndex + 2;
             if (maxPageIndex > $scope.ProductsPage.totalPages) {
                 maxPageIndex = $scope.ProductsPage.totalPages;
@@ -118,10 +118,34 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
     }
 
     $scope.createOrder = function (){
-        var userName = $scope.user.username;
-        $http.get(contextPath + '/basket/order/' + userName )
+        $scope.order.userName = $scope.user.username;
+        console.log($scope.order)
+        $http.post(contextPath + '/basket/order', $scope.order)
             .then(function (response){
+                $scope.order = null;
+                $scope.showOrder = true;
+                $scope.userOrder = response.data
+                console.log(response)
+                console.log($scope.userOrder)
+            });
+    }
+    // $scope.createNewProduct = function () {
+    //     $http.post(contextPath + '/products', $scope.product)
+    //         .then(function (response) {
+    //             $scope.product = null;
+    //             $scope.fillTable();
+    //         });
+    // };
+    $scope.tryToReg = function (){
+        console.log($scope.user)
+        $http.post('http://localhost:8189/app/reg',$scope.user)
+            .then(function successCallback(response){
+                    $scope.regBool = true
+                    $scope.regName = response.data.userName;
 
+            }, function errorCallback(response) {
+                $scope.regBool = false
+                window.alert("Учетная запись уже существует");
             });
     }
 
@@ -139,4 +163,11 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
                 window.alert("Error");
             });
     };
+
+    $scope.exit = function (){
+        $scope.user.username = null;
+        $scope.user.password = null;
+        $scope.user.username = null;
+        $scope.authorized = false;
+    }
 });

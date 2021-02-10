@@ -17,12 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
-    private ProductService productService;
-
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private final ProductService productService;
 
     @GetMapping
     public Page<ProductDTO> findAllProducts(
@@ -51,6 +46,7 @@ public class ProductController {
     @PutMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProductDTO editProduct(@RequestBody ProductDTO productDTO) {
+        System.out.println(productDTO.getCount() + "  " + productDTO.getTitle());
         return productService.editProduct(productDTO);
     }
 

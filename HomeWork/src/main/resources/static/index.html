@@ -28,10 +28,38 @@
             <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
         </form>
     </div>
+    <div class="mb-3 text-center" ng-show="!authorized">
+        <form class="form-signin" ng-submit="tryToReg()" style="max-width: 350px; padding: 15px; margin: 0 auto;">
+            <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+
+            <label for="regUsername" class="sr-only">Имя пользователя</label>
+            <input type="text" ng-model="user.userName" id="regUsername" class="form-control"
+                   placeholder="Имя пользователя" style="margin-bottom: 10px;" required="">
+
+            <label for="regPassword" class="sr-only">Пароль</label>
+            <input type="password" ng-model="user.regPassword" id="regPassword" class="form-control" placeholder="Пароль"
+                   style="margin-bottom: 10px;" required="">
+
+            <label for="regMail" class="sr-only">Почта</label>
+            <input type="email" ng-model="user.mail" id="regMail" class="form-control" placeholder="Почта">
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Отправить</button>
+        </form>
+    </div>
+    <div class="mb-3 text-center" ng-show="regBool">
+        <h> Пользователь {{regName}} успешно зарегестрирован</h>
+    </div>
+
+
     <div class="mb-3 text-center" ng-show="authorized">
         <h1> Добро пожаловать: {{user.username}}</h1>
     </div>
+    <div class="mb-3 text-center" ng-show="authorized">
+        <form novalidate ng-submit="exit()">
+            <button class="btn btn-success" type="submit">Выйти</button>
+        </form>
+    </div>
 
+    <div class="mb-3 text-center" ng-show="authorized">
     <h3>Фильтр</h3>
     <form novalidate ng-submit="fillTable()">
         <div class="form-group row">
@@ -104,6 +132,77 @@
         </ul>
     </nav>
 
+        <H2>Корзина</H2>
+        <table class="table table-hover" cellpadding="0" cellspacing="0">
+            <thead>
+            <tr>
+                <td>Название</td>
+                <td>Цена</td>
+                <td>Количество</td>
+                <td>Сумма</td>
+                <td>Удалить</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="p in basketProduct">
+                <td>{{p.title}}</td>
+                <td>{{p.cost}}</td>
+                <td>
+                    <button class="btn " ng-click="decrimentCount(p.id)">-</button>
+                    {{p.count}}
+                    <button class="btn " ng-click="incrementCount(p.id)">+</button>
+                </td>
+                <td>{{p.sumCost}}</td>
+                <td>
+                    <button class="btn btn-danger" ng-click="deleteProductFromBasket(p.id)">Удалить</button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Итог {{totalCost}}</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <form novalidate ng-submit="createOrder()">
+                    <label for="deliveryAddres">Адресс Доставки</label>
+                    <input class="from-control" type="text" ng-model="order.addres"
+                           id="deliveryAddres">
+                    <input class="btn btn-success" type="submit" value="Оформить Заказ">
+                </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="mb-3 text-center" ng-show="showOrder">
+            <div>Заказ</div>
+        <table class="table table-hover" cellpadding="0" cellspacing="0">
+
+            <thead>
+            <tr>
+                <td>Кто</td>
+                <td>Что</td>
+                <td>Куда</td>
+            </tr>
+            </thead>
+            <tbody>
+
+            <tr ng-repeat="p in userOrder">
+                <td>{{p.userName}}</td>
+                <td>{{p.titile}}</td>
+                <td>{{p.addres}}</td>
+            </tr>
+            </tbody>
+        </table>
+        </div>
+
+
     <h3>Добавить новый товар </h3>
     <form novalidate ng-submit="createNewProduct()">
         <div class="form-group col-md-6">
@@ -137,52 +236,7 @@
             <input class="btn btn-success" type="submit" value="Сохранить">
         </div>
     </form>
-
-    <div class="mb-3 text-center" ng-show="authorized">
-
-
-    <H2>Корзина</H2>
-    <table class="table table-hover" cellpadding="0" cellspacing="0">
-        <thead>
-        <tr>
-            <td>Название</td>
-            <td>Цена</td>
-            <td>Количество</td>
-            <td>Сумма</td>
-            <td>Удалить</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="p in basketProduct">
-            <td>{{p.title}}</td>
-            <td>{{p.cost}}</td>
-            <td>
-                <button class="btn " ng-click="decrimentCount(p.id)">-</button>
-                {{p.count}}
-                <button class="btn " ng-click="incrementCount(p.id)">+</button>
-            </td>
-            <td>{{p.sumCost}}</td>
-            <td>
-                <button class="btn btn-danger" ng-click="deleteProductFromBasket(p.id)">Удалить</button>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>Итог {{totalCost}}</td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><button class="btn btn-success" ng-click="createOrder()">Сформировать заказ</button></td>
-        </tr>
-        </tbody>
-    </table>
     </div>
-
 </div>
 </body>
 </html>

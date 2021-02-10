@@ -1,5 +1,7 @@
 package max_sk.HomeWork.services;
 
+import lombok.RequiredArgsConstructor;
+import max_sk.HomeWork.dto.OrderDTO;
 import max_sk.HomeWork.dto.ProductDTO;
 import max_sk.HomeWork.model.Order;
 import max_sk.HomeWork.model.User;
@@ -21,24 +23,14 @@ import java.util.List;
 
 @Service
 @Scope(scopeName = "prototype")
+@RequiredArgsConstructor
 public class BasketProductsService {
-    private ProductRepository productRepository;
-    private OrderRepository orderRepository;
-    private UserRepository userRepository;
+    private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     private List<ProductDTO> basketList;
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
     private static Long orderNumber;
-
-    @Autowired
-    public BasketProductsService(ProductRepository productRepository,
-                                 OrderRepository orderRepository,
-                                 UserRepository userRepository,
-                                 EntityManager entityManager) {
-        this.productRepository = productRepository;
-        this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
-        this.entityManager = entityManager;
-    }
 
     @PostConstruct
     public void init(){
@@ -102,27 +94,17 @@ public class BasketProductsService {
     }
 
     @Transactional
-    public void createOrder(String userName){
-        User user = userRepository.findByUsername(userName).orElseThrow(() -> new UsernameNotFoundException(String.format("User '%s' not found", userName)));
+    public void createOrder(OrderDTO orderDTO){
+        User user = userRepository.findByUsername(orderDTO.getUserName()).orElseThrow(() -> new UsernameNotFoundException(String.format("User '%s' not found", orderDTO.getUserName())));
         for (ProductDTO productDTO : basketList){
-            entityManager.createNativeQuery("insert into orders(id_user, id_product, order_number, count, sum_cost) values(:a,:b,:c,:d,:e)")
+            entityManager.createNativeQuery("insert into orders(id_user, id_product, order_number, count, adres, sum_cost) values(:a,:b,:c,:d,:e,:f)")
                     .setParameter("a", user.getId() )
                     .setParameter("b", productDTO.getId())
                     .setParameter("c", orderNumber )
                     .setParameter("d", productDTO.getCount())
-                    .setParameter("e", productDTO.getSumCost())
+                    .setParameter("e", orderDTO.getAddres())
+                    .setParameter("f", productDTO.getSumCost())
                     .executeUpdate();
-            //Запрос через JPA обновляет существующие товары вместо добовления, не смог с этим по боротся
-            //сделал через нативный запрос
-//            orderRepository.save(new Order(
-//                    productDTO.getId(),
-//                    user.getId(),
-//                    productDTO.getId(),
-//                    orderNumber,
-//                    productDTO.getCount(),
-//                    productDTO.getSumCost(),
-//                    new Date()
-//                    ));
         }
         basketList.clear();
         orderNumber++;
